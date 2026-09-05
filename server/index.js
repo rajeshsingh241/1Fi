@@ -5,7 +5,13 @@ import { products, emiPlansMap, generateDefaultEmiPlans } from './data.js';
 const app = express();
 const PORT = process.env.PORT || 3001;
 
-app.use(cors());
+// Enable CORS for all origins, headers and preflight OPTIONS requests
+app.use(cors({
+  origin: '*',
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
+}));
+
 app.use(express.json());
 
 // Simulated network delay middleware (400ms)
@@ -82,5 +88,5 @@ app.get('/api/emi-plans/:productId', (req, res) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`🚀 1Fi Mock API Server running on http://localhost:${PORT}`);
+  console.log(`🚀 1Fi Mock API Server running on port ${PORT}`);
 });

@@ -1,20 +1,25 @@
 import { Product, EMIPlan } from '../types';
 
-// Clean API Base URL calculation
+// Clean API Base URL calculation guaranteeing /api suffix
 const getApiBase = (): string => {
-  const envUrl = import.meta.env.VITE_API_URL;
-  if (envUrl && envUrl.trim() !== '') {
-    return envUrl.replace(/\/+$/, '');
+  let base = import.meta.env.VITE_API_URL;
+
+  if (!base || base.trim() === '') {
+    const isLocal = typeof window !== 'undefined' && 
+      (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
+
+    base = isLocal ? '/api' : 'https://onefi-yp2z.onrender.com/api';
   }
 
-  const isLocal = typeof window !== 'undefined' && 
-    (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
+  // Strip trailing slashes
+  base = base.replace(/\/+$/, '');
 
-  if (isLocal) {
-    return '/api';
+  // Guarantee /api endpoint suffix
+  if (!base.endsWith('/api')) {
+    base = `${base}/api`;
   }
 
-  return 'https://onefi-yp2z.onrender.com/api';
+  return base;
 };
 
 const API_BASE = getApiBase();

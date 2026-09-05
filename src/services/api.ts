@@ -1,10 +1,23 @@
 import { Product, EMIPlan } from '../types';
 
-// Dynamic API base URL: Uses environment variable, production backend, or local proxy
-const API_BASE = import.meta.env.VITE_API_URL || 
-  (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
-    ? '/api' 
-    : 'https://onefi-yp2z.onrender.com/api');
+// Clean API Base URL calculation
+const getApiBase = (): string => {
+  const envUrl = import.meta.env.VITE_API_URL;
+  if (envUrl && envUrl.trim() !== '') {
+    return envUrl.replace(/\/+$/, '');
+  }
+
+  const isLocal = typeof window !== 'undefined' && 
+    (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
+
+  if (isLocal) {
+    return '/api';
+  }
+
+  return 'https://onefi-yp2z.onrender.com/api';
+};
+
+const API_BASE = getApiBase();
 
 export async function getProducts(query?: string, category?: string): Promise<Product[]> {
   const params = new URLSearchParams();
